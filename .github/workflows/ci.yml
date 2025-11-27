@@ -21,23 +21,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Make gradlew executable (API)
-        working-directory: ./api-test
-        run: chmod +x gradlew
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
 
       - name: Run API tests
         working-directory: ./api-test
-        run: ./gradlew clean test --no-daemon
+        run: gradle clean test --no-daemon
 
       - name: Upload API test report
         if: always()
@@ -60,28 +49,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v3
 
       - name: Install Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable || sudo apt-get install -y chromium-browser
 
-      - name: Make gradlew executable (UI)
-        working-directory: ./ui-test
-        run: chmod +x gradlew
-
       - name: Run UI tests
         working-directory: ./ui-test
-        run: ./gradlew clean test --no-daemon
+        run: gradle clean test --no-daemon
 
       - name: Upload UI test report
         if: always()
